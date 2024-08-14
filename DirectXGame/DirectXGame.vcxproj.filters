@@ -52,6 +52,33 @@
     <Filter Include="ソース ファイル\2d">
       <UniqueIdentifier>{814a0f6d-f847-4c45-856d-4688fa4c9e6c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\lane">
+      <UniqueIdentifier>{66865912-933d-42b8-91cd-b743a119c79a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\lane">
+      <UniqueIdentifier>{e5bba548-e261-4afc-9e67-542d1d03b8b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\note">
+      <UniqueIdentifier>{2a3da1eb-c70c-4291-9501-d5381ef6aaad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\note">
+      <UniqueIdentifier>{6592e2ae-4016-4d2c-be0f-0e2be409b030}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\camera">
+      <UniqueIdentifier>{cd804291-6f79-4578-b1fe-bfc5bbd1514c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\camera">
+      <UniqueIdentifier>{8ed87724-57ad-4e2b-b3ea-ec3ca4afdfff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\3d">
+      <UniqueIdentifier>{2ab9ca3e-9bee-49fa-8be5-beb8c7af3975}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\debug">
+      <UniqueIdentifier>{c9009496-227e-47ee-b5da-57160c97bc5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\debug">
+      <UniqueIdentifier>{323a563b-629f-477d-9a84-02cbcbd89d53}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -68,6 +95,36 @@
     </ClCompile>
     <ClCompile Include="2d\ImGuiManager.cpp">
       <Filter>ソース ファイル\2d</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Matrix4x4.cpp">
+      <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Vector3.cpp">
+      <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\MathExtension\mathExtension.cpp">
+      <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Matrix4x4\calc\matrix4calc.cpp">
+      <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Vector3\calc\vector3calc.cpp">
+      <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="Lane.cpp">
+      <Filter>ソース ファイル\lane</Filter>
+    </ClCompile>
+    <ClCompile Include="Note.cpp">
+      <Filter>ソース ファイル\note</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>ソース ファイル\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldTransformEx.cpp">
+      <Filter>ソース ファイル\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiWindow.cpp">
+      <Filter>ソース ファイル\debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +214,27 @@
     </ClInclude>
     <ClInclude Include="3d\ObjectColor.h">
       <Filter>ヘッダー ファイル\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Lane.h">
+      <Filter>ヘッダー ファイル\lane</Filter>
+    </ClInclude>
+    <ClInclude Include="math\MathExtension\mathExtension.h">
+      <Filter>ヘッダー ファイル\math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Matrix4x4\calc\matrix4calc.h">
+      <Filter>ヘッダー ファイル\math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Vector3\calc\vector3calc.h">
+      <Filter>ヘッダー ファイル\math</Filter>
+    </ClInclude>
+    <ClInclude Include="Note.h">
+      <Filter>ヘッダー ファイル\note</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>ヘッダー ファイル\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiWindow.h">
+      <Filter>ヘッダー ファイル\debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
