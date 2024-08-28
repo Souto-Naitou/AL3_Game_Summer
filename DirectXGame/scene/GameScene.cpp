@@ -3,6 +3,7 @@
 #include <cassert>
 #include "PrimitiveDrawer.h"
 #include "ImGuiWindow.h"
+#include "TitleScene.h"
 
 GameScene::GameScene()
 {
@@ -11,7 +12,6 @@ GameScene::GameScene()
 
 GameScene::~GameScene() 
 {
-	delete pLane_;
 	delete pDebugCamera_;
 }
 
@@ -23,15 +23,20 @@ void GameScene::Initialize() {
 	viewProjection_.Initialize();
 	worldTransform_.Initialize();
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
-	pLane_ = new Lane();
-	pLane_->Initialize();
 	pCamera = new Camera();
-	pCamera->Initialize({ 0.0f, -3.0f, 3.4f }, { -2.7f, 0.0f, 0.0f });
-	pDebugCamera_ = new DebugCamera(1280, 720);
+	pCamera->Initialize({ 0.0f, 4.0f, -37.0f }, { 0.5f, 0.0f, 0.0f });
+	pDebugCamera_ = new DebugCamera(kScreenWidth, kScreenHeight);
 	imguiWindow_ = new ImGuiWindow();
 	imguiWindow_->SetDebugOperationData(&debugOperationData_);
+
 	debugOperationData_.pCameraRotation = &pCamera->worldTransform_.rotation_;
 	debugOperationData_.pCameraTranslation = &pCamera->worldTransform_.translation_;
+
+	currentScene_ = Scenes::Title;
+	pTitleScene_ = new TitleScene();
+	pTitleScene_->Initialize();
+	pTitleScene_->SetGameScene(this);
+
 }
 
 void GameScene::Update()
@@ -48,6 +53,23 @@ void GameScene::Update()
 	pDebugCamera_->Update();
 	pCamera->Update();
 
+	switch (currentScene_)
+	{
+	case Scenes::Title:
+		pTitleScene_->Update();
+		break;
+	case Scenes::Select:
+		break;
+	case Scenes::RhythmGame:
+		pRhythmGame_->Update();
+		break;
+	case Scenes::Result:
+		break;
+	default:
+		break;
+	}
+	
+
 	if (enableDebugCamera)
 	{
 		viewProjection_.matView = pDebugCamera_->GetViewProjection().matView;
@@ -60,8 +82,6 @@ void GameScene::Update()
 		viewProjection_.matProjection = pCamera->GetViewProjection().matProjection;
 		viewProjection_.TransferMatrix();
 	}
-
-	pLane_->Update();
 }
 
 void GameScene::Draw() {
@@ -77,6 +97,21 @@ void GameScene::Draw() {
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
 
+	switch (currentScene_)
+	{
+	case Scenes::Title:
+		break;
+	case Scenes::Select:
+		break;
+	case Scenes::RhythmGame:
+		pRhythmGame_->DrawSpriteBackGround();
+		break;
+	case Scenes::Result:
+		break;
+	default:
+		break;
+	}
+
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
@@ -90,8 +125,21 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+	switch (currentScene_)
+	{
+	case Scenes::Title:
+		break;
+	case Scenes::Select:
+		break;
+	case Scenes::RhythmGame:
+		pRhythmGame_->Draw3D(viewProjection_);
+		break;
+	case Scenes::Result:
+		break;
+	default:
+		break;
+	}
 
-	pLane_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -105,8 +153,70 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 
+	switch (currentScene_)
+	{
+	case Scenes::Title:
+		pTitleScene_->DrawSpriteFront();
+		break;
+	case Scenes::Select:
+		break;
+	case Scenes::RhythmGame:
+		break;
+	case Scenes::Result:
+		break;
+	default:
+		break;
+	}
+
 	// スプライト描画後処理
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+void GameScene::ChangeScene()
+{
+	// 早期リターン
+	if (currentScene_ == reserveScene_) return;
+	currentScene_ = reserveScene_;
+	
+	switch (currentScene_)
+	{
+	case Scenes::Title:
+		if (pTitleScene_)
+		{
+			delete pTitleScene_;
+			pTitleScene_ = nullptr;
+		}
+		pTitleScene_ = new TitleScene();
+		pTitleScene_->Initialize();
+		pTitleScene_->SetGameScene(this);
+		break;
+
+
+	case Scenes::Select:
+		break;
+
+
+	case Scenes::RhythmGame:
+		if (pRhythmGame_)
+		{
+			delete pRhythmGame_;
+			pRhythmGame_ = nullptr;
+		}
+		pRhythmGame_ = new RhythmGame();
+		pRhythmGame_->SetDebugOperationData(&debugOperationData_);
+		pRhythmGame_->SetGameScene(this);
+		pRhythmGame_->Initialize();
+		break;
+
+
+	case Scenes::Result:
+		break;
+	}
+}
+
+void GameScene::ReserveSceneChange(Scenes _scene)
+{
+	reserveScene_ = _scene;
 }

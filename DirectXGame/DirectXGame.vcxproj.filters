@@ -79,6 +79,27 @@
     <Filter Include="ソース ファイル\debug">
       <UniqueIdentifier>{323a563b-629f-477d-9a84-02cbcbd89d53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\rhythmgame">
+      <UniqueIdentifier>{5931d712-73af-4e3d-b414-44042c0b636a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\rhythmgame">
+      <UniqueIdentifier>{de999f36-3da8-470a-98a4-c8535d2645b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\enum class">
+      <UniqueIdentifier>{b6aca0dc-9c85-46af-8a8b-9bb8ce1048a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\scorefile">
+      <UniqueIdentifier>{67c7c03f-5427-4d48-a35e-5ed2a2fe79a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\scorefile">
+      <UniqueIdentifier>{ffdf4343-0b85-4c7e-9df3-451cb8d02279}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\skydome">
+      <UniqueIdentifier>{bd0370fd-b5dc-480f-8c08-1468630dbeaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\skydome">
+      <UniqueIdentifier>{723749bf-d238-437b-92fc-ecad799f107e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -125,6 +146,18 @@
     </ClCompile>
     <ClCompile Include="ImGuiWindow.cpp">
       <Filter>ソース ファイル\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="RhythmGame.cpp">
+      <Filter>ソース ファイル\rhythmgame</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadScore.cpp">
+      <Filter>ソース ファイル\scorefile</Filter>
+    </ClCompile>
+    <ClCompile Include="Skydome.cpp">
+      <Filter>ソース ファイル\skydome</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -236,6 +269,27 @@
     <ClInclude Include="ImGuiWindow.h">
       <Filter>ヘッダー ファイル\debug</Filter>
     </ClInclude>
+    <ClInclude Include="RhythmGame.h">
+      <Filter>ヘッダー ファイル\rhythmgame</Filter>
+    </ClInclude>
+    <ClInclude Include="EnumClass.h">
+      <Filter>ヘッダー ファイル\enum class</Filter>
+    </ClInclude>
+    <ClInclude Include="define.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScene.h">
+      <Filter>ヘッダー ファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadScore.h">
+      <Filter>ヘッダー ファイル\scorefile</Filter>
+    </ClInclude>
+    <ClInclude Include="SheetMusic.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Skydome.h">
+      <Filter>ヘッダー ファイル\skydome</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\SpritePS.hlsl">
@@ -285,5 +339,6 @@
     <None Include="Resources\shaders\Terrain.hlsli">
       <Filter>シェーダー ファイル</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

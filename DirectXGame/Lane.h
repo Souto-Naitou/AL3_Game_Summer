@@ -33,7 +33,9 @@ public:
     /// <summary>
     /// 描画
     /// </summary>
-    void Draw(const ViewProjection& _viewProjection);
+    void Draw3D(const ViewProjection& _viewProjection);
+
+    LaneData* GetLaneData() { return &laneData_; };
 
 private:
     WorldTransform      worldTransform_;

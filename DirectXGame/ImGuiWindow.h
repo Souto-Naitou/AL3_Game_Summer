@@ -1,25 +1,39 @@
 #pragma once
 #include "Vector3.h"
+#include "SheetMusic.h"
+#include <string>
 
 
 class ImGuiWindow
 {
 public:
 
-	struct DebugOperationData
-	{
-		Vector3* pCameraRotation;
-		Vector3* pCameraTranslation;
-	};
+    struct DebugOperationData
+    {
+        Vector3*        pCameraRotation;
+        Vector3*        pCameraTranslation;
+        size_t*         pNoteListSize;
+        double*         pElapsedTime;
+        SheetMusic*     pSheetMusic;
+        bool*           pEnableMetronome;
+        std::string*    pSheetPath;
+        bool*           pIsReqReload;
+        bool*           pIsOpenPopupModal;
+        float*          pVolume;
+        bool*           pIsChangeVolume;
+        unsigned int*   pCountMeasure;
+    };
 
-	ImGuiWindow() {};
-	~ImGuiWindow() {};
+    ImGuiWindow() {};
+    ~ImGuiWindow() {};
 
-	void SetDebugOperationData(DebugOperationData* _debugOperationData) { pDebugOperationData_ = _debugOperationData; };
-	void DebugWindowDraw();
-	
+    void SetDebugOperationData(DebugOperationData* _debugOperationData) { pDebugOperationData_ = _debugOperationData; };
+    void DebugWindowDraw();
+    
 
 private:
-	void Window_Camera();
-	DebugOperationData* pDebugOperationData_ = nullptr;
+    void Window_Camera();
+    void Window_RhythmGame();
+    DebugOperationData* pDebugOperationData_ = nullptr;
+    char textBuffer[64];
 };

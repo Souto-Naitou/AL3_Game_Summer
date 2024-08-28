@@ -111,6 +111,7 @@
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="ImGuiWindow.cpp" />
     <ClCompile Include="Lane.cpp" />
+    <ClCompile Include="LoadScore.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math\MathExtension\mathExtension.cpp" />
     <ClCompile Include="math\Matrix4x4.cpp" />
@@ -118,8 +119,11 @@
     <ClCompile Include="math\Vector3.cpp" />
     <ClCompile Include="math\Vector3\calc\vector3calc.cpp" />
     <ClCompile Include="Note.cpp" />
+    <ClCompile Include="RhythmGame.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Skydome.cpp" />
+    <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="WorldTransformEx.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -146,8 +150,11 @@
     <ClInclude Include="base\StringUtility.h" />
     <ClInclude Include="base\TextureManager.h" />
     <ClInclude Include="base\WinApp.h" />
+    <ClInclude Include="define.h" />
+    <ClInclude Include="EnumClass.h" />
     <ClInclude Include="input\Input.h" />
     <ClInclude Include="Lane.h" />
+    <ClInclude Include="LoadScore.h" />
     <ClInclude Include="math\MathExtension\mathExtension.h" />
     <ClInclude Include="math\Matrix4x4.h" />
     <ClInclude Include="math\Matrix4x4\calc\matrix4calc.h" />
@@ -155,10 +162,14 @@
     <ClInclude Include="math\Vector3.h" />
     <ClInclude Include="math\Vector3\calc\vector3calc.h" />
     <ClInclude Include="math\Vector4.h" />
+    <ClInclude Include="RhythmGame.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="Note.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ImGuiWindow.h" />
+    <ClInclude Include="SheetMusic.h" />
+    <ClInclude Include="Skydome.h" />
+    <ClInclude Include="TitleScene.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\TerrainPS.hlsl">
@@ -169,6 +180,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <None Include="ClassDiagram.cd" />
     <None Include="Resources\shaders\Obj.hlsli" />
     <None Include="Resources\shaders\Primitive.hlsli" />
     <None Include="Resources\shaders\Shape.hlsli">

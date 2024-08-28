@@ -18,8 +18,8 @@ void Lane::Initialize()
 
 	// laneDataの初期化
 	laneData_.direction = Vector3(0.0f, 0.0f, -1.0f); // -z方向を前に
-	laneData_.interval = 5.0f;
-	laneData_.length = 10.0f;
+	laneData_.interval = 3.0f;
+	laneData_.length = 40.0f;
 
 
 	// モデル生成
@@ -31,6 +31,7 @@ void Lane::Initialize()
 
 void Lane::Update()
 {
+	// レーン位置計算
 	laneData_.left[0].x = -1.0f * laneData_.interval * 0.5f;
 	laneData_.right[0].x = 1.0f * laneData_.interval * 0.5f;
 	laneData_.left[1] = laneData_.left[0];
@@ -39,7 +40,7 @@ void Lane::Update()
 	laneData_.right[1] = Add(laneData_.right[0], Multiply(laneData_.length, laneData_.direction));
 }
 
-void Lane::Draw(const ViewProjection& _viewProjection)
+void Lane::Draw3D(const ViewProjection& _viewProjection)
 {
 	_viewProjection;
 	pPrimitiveDrawer_->DrawLine3d(laneData_.left[0], laneData_.left[1], Vector4(1.0f, 1.0f, 1.0f, 1.0f));

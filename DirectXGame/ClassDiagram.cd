@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Lane">
+    <Position X="0.5" Y="5" Width="2" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Struct Name="Lane::LaneData">
+        <TypeIdentifier>
+          <NewMemberFileName>Lane.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AIQAAAAAAAAAIQAAAAAAAAIEAAAAAAAgAQAAAAAAAgA=</HashCode>
+      <FileName>Lane.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Note">
+    <Position X="2.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIQAAAAAAAAgAQABAAAgAAIGAYAAAAAgBAgAAAcAAAA=</HashCode>
+      <FileName>Note.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameScene">
+    <Position X="0.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAiAQAAAwAAAAEABAIBAIAIABAAAIIAAQAAAAA=</HashCode>
+      <FileName>scene\GameScene.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RhythmGame">
+    <Position X="3" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAUAAAAAAEAAAwAAAAAAAAAEAAAAAAAAAACAAhAAAAA=</HashCode>
+      <FileName>RhythmGame.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Yu Gothic UI" Size="9" />
+</ClassDiagram>

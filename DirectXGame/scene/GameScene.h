@@ -11,6 +11,16 @@
 #include "Camera.h"
 #include "DebugCamera.h"
 #include "ImGuiWindow.h"
+#include "Note.h"
+#include "RhythmGame.h"
+#include "define.h"
+
+
+
+#include <list>
+
+class TitleScene;
+
 
 /// <summary>
 /// ゲームシーン
@@ -43,19 +53,35 @@ public: // メンバ関数
     /// </summary>
     void Draw();
 
+    /// <summary>
+    /// シーンを変えるフェーズ
+    /// </summary>
+    void ChangeScene();
+
 private: // メンバ変数
-    DirectXCommon*  dxCommon_ = nullptr;
-    Input*          input_ = nullptr;
-    Audio*          audio_ = nullptr;
-    ViewProjection  viewProjection_;
-    WorldTransform  worldTransform_;
-    Lane*           pLane_ = nullptr;
-    Camera*         pCamera = nullptr;
-    DebugCamera*    pDebugCamera_ = nullptr;
-    ImGuiWindow*    imguiWindow_ = nullptr;
+    DirectXCommon*      dxCommon_           = nullptr;
+    Input*              input_              = nullptr;
+    Audio*              audio_              = nullptr;
+    ViewProjection      viewProjection_;
+    WorldTransform      worldTransform_;
+
+    Camera*             pCamera             = nullptr;
+    DebugCamera*        pDebugCamera_       = nullptr;
+    ImGuiWindow*        imguiWindow_        = nullptr;
+    RhythmGame*         pRhythmGame_        = nullptr;
+    TitleScene*         pTitleScene_        = nullptr;
+
+    Scenes              reserveScene_       = Scenes::Title;
+    Scenes              currentScene_       = Scenes::Title;
     ImGuiWindow::DebugOperationData debugOperationData_ = {};
 
-    bool            enableDebugCamera = false;
+    bool                enableDebugCamera   = false;
+
+public:
+    /// <summary> 
+    /// シーンチェンジを予約する
+    /// </summary>
+    void ReserveSceneChange(Scenes _scene);
 
     /// <summary>
     /// ゲームシーン用
