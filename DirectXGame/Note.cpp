@@ -17,7 +17,7 @@ void Note::Initialize()
     worldTransform_.Initialize();
     pModel_ = Model::Create();
     modelTexture_ = TextureManager::Load("white1x1.png");
-    worldTransform_.scale_ = { 0.3f, 0.1f, 0.1f };
+    worldTransform_.scale_ = { 0.3f, 0.01f, 0.1f };
 }
 
 void Note::Update()
@@ -56,9 +56,9 @@ void Note::Update()
     // tに従って移動する
     worldTransform_.translation_ = (1.0f - time_Lane_) * laneBegin_ + time_Lane_ * laneEnd_;
 
-    if (time_Lane_ >= 1.0f) isDead_ = true;
+    if (time_Lane_ >= 1.5f) isDead_ = true;
 
-    time_Lane_ += 0.01f;
+    time_Lane_ += *userSettingVelociT_;
     worldTransform_.UpdateMatrix();
 }
 

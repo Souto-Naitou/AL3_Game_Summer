@@ -4,6 +4,8 @@
 #include "Lane.h"
 #include "Note.h"
 #include "Skydome.h"
+#include "JudgeTiming.h"
+
 #include <Model.h>
 #include <Audio.h>
 #include <profileapi.h>
@@ -20,25 +22,45 @@ RhythmGame::~RhythmGame()
 
 void RhythmGame::Initialize()
 {
-    // インスタンスを取得
+    /// インスタンス
     pInput_ = Input::GetInstance();
     pLane_ = new Lane();
-    pLane_->Initialize();
     pLoadScore_ = new LoadScore();
     pAudio_ = Audio::GetInstance();
-    pSkydome_ = new Skydome();
-    pModelSkydome_ = Model::CreateFromOBJ("tenkyurs", true);
-    pSkydome_->Initialize(pModelSkydome_);
+    pJudgeTiming_ = new JudgeTiming();
+
+    /// セッター
+    pJudgeTiming_->SetLane(pLane_);
+    pJudgeTiming_->SetNoteList(&pNoteList_);
+
+    /// 初期化処理
+    pLane_->Initialize();
+    pJudgeTiming_->Initialize();
+    
+
+    /// 背景画像の読み込み
     hBackgound_ = TextureManager::Load("tenkyurs/sky_sphere.png");
+    /// 背景画像のスプライトを作成
     pSpriteBackGround_ = Sprite::Create(hBackgound_, {0,0});
+
+    /// 各SEの読み込み
     hCagw_ = pAudio_->LoadWave("se/cagw.wav");
     hKick_ = pAudio_->LoadWave("se/kick.wav");
     hSnare_ = pAudio_->LoadWave("se/snare.wav");
+
+    /// 楽譜データのロード
     sheetpath_ = "im_here.xml";
     sheetmusic_ = pLoadScore_->Load(sheetpath_);
+
+    /// メインソングのロード(別スレッドにて)
+    /* 楽譜データに楽曲パスが含まれているため楽譜データの読み込みより早く実行してはいけない */
     thread_loading_ = std::thread(&RhythmGame::LoadingThreadProcess, this);
+
+    /// QPFの使用可否を取得
     bool qpfCompatible = QueryPerformanceFrequency(&mFreq_);
     assert(qpfCompatible && "QueryPerformanceFrequencyが非対応です");
+
+    /// デバッグで使用するデータを登録
     pDebugOperationData_->pElapsedTime = &elapsedTime_;
     pDebugOperationData_->pNoteListSize = &notelistSize_;
     pDebugOperationData_->pSheetMusic = &sheetmusic_;
@@ -53,9 +75,9 @@ void RhythmGame::Initialize()
     elapsedTime_ = -100.0;
     musicVolume_ = 0.05f;
 
-    userSettingVelociT_ = 0.01f;
+    userSettingVelociT_ = 0.005f;
 
-    // 一小節目のデータを予め解読
+    /// 一小節目のデータを予め解読
     for (auto& sheet : sheetmusic_.sheetData)
         for (auto& symbols : sheet)
         {
@@ -87,11 +109,11 @@ void RhythmGame::Update()
         }
     }
 
-    // ボリューム設定
+    /// ボリューム設定
     if (isChangeMusicVolume_)
         pAudio_->SetVolume(playHandle_Song_, musicVolume_);
 
-    // ロードが終わったら初期化処理をし、スレッド終了を待機
+    /// ロードが終わったら初期化処理をし、スレッド終了を待機
     if (isEndLoad_)
     {
         playHandle_Song_ = pAudio_->PlayWave(hSong_, false, musicVolume_);
@@ -104,6 +126,7 @@ void RhythmGame::Update()
         isEndLoad_ = false;
     }
 
+    // リズムゲーム更新
     UpdateRhythmGame();
 
     /// Update
@@ -136,6 +159,7 @@ void RhythmGame::Draw3D(const ViewProjection& _viewProjection)
     }
     // note->Draw3Dより先にpLane_->Draw3Dを走らせるとエラーでます
     pLane_->Draw3D(_viewProjection);
+    pJudgeTiming_->Draw3D(_viewProjection);
 }
 
 void RhythmGame::MakeNote(Direction _beginLane)
@@ -145,6 +169,7 @@ void RhythmGame::MakeNote(Direction _beginLane)
     backNote->Initialize();
     backNote->SetBeginLane(_beginLane);
     backNote->SetLaneData(pLane_->GetLaneData());
+    backNote->SetUserSettingVelociT(&userSettingVelociT_);
     return;
 }
 

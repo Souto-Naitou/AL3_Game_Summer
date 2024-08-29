@@ -125,6 +125,7 @@
     <ClCompile Include="Skydome.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="WorldTransformEx.cpp" />
+    <ClCompile Include="JudgeTiming.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2d\ImGuiManager.h" />
@@ -170,6 +171,7 @@
     <ClInclude Include="SheetMusic.h" />
     <ClInclude Include="Skydome.h" />
     <ClInclude Include="TitleScene.h" />
+    <ClInclude Include="JudgeTiming.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\TerrainPS.hlsl">

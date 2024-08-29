@@ -100,6 +100,12 @@
     <Filter Include="ソース ファイル\skydome">
       <UniqueIdentifier>{723749bf-d238-437b-92fc-ecad799f107e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\judge">
+      <UniqueIdentifier>{1d27f536-3fe9-4e79-b99a-81fa1bea6538}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\judge">
+      <UniqueIdentifier>{27e4df3c-d0ad-4bf3-a8fe-eaa323cac0ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -158,6 +164,9 @@
     </ClCompile>
     <ClCompile Include="Skydome.cpp">
       <Filter>ソース ファイル\skydome</Filter>
+    </ClCompile>
+    <ClCompile Include="JudgeTiming.cpp">
+      <Filter>ソース ファイル\judge</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -289,6 +298,9 @@
     </ClInclude>
     <ClInclude Include="Skydome.h">
       <Filter>ヘッダー ファイル\skydome</Filter>
+    </ClInclude>
+    <ClInclude Include="JudgeTiming.h">
+      <Filter>ヘッダー ファイル\judge</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

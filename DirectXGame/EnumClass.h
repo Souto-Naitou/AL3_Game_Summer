@@ -7,3 +7,10 @@ enum class Direction
 	Left,
 	Right
 };
+
+enum class HitResult
+{
+	Perfect,
+	Great,
+	Bad
+};

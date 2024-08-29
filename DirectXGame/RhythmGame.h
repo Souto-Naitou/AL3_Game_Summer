@@ -18,6 +18,7 @@ class Audio;
 class Skydome;
 class Model;
 class Sprite;
+class JudgeTiming;
 
 /// <summary>
 /// リズムゲーム
@@ -40,6 +41,7 @@ public:
 
     void SetGameScene(GameScene* _gameScene) { pGameScene_ = _gameScene; }
     void SetDebugOperationData(ImGuiWindow::DebugOperationData* _dod) { pDebugOperationData_ = _dod; }
+    //float GetUserSettingVelociT() { return userSettingVelociT_; }
 
 private:
 
@@ -49,7 +51,7 @@ private:
     Input*              pInput_                 = nullptr;      // !< インプットオブジェクト
     GameScene*          pGameScene_             = nullptr;      // !< ゲームシーンポインタ（借りてくる）
     LoadScore*          pLoadScore_             = nullptr;      // !< 譜面ローダー
-    Skydome*            pSkydome_               = nullptr;      // !< 天球
+    JudgeTiming*        pJudgeTiming_           = nullptr;      // !< タイミング判定クラス
     Sprite*             pSpriteBackGround_      = nullptr;      // !< 背景スプライト
     std::string         sheetpath_              = {};           // !< 譜面パス
     SheetMusic          sheetmusic_             = {};           // !< 譜面
@@ -61,6 +63,7 @@ private:
     uint32_t            hBackgound_             = 0u;           // !< 背景スプライト
     LARGE_INTEGER       mFreq_                  = {};           // !< 1秒間のカウント数
     LARGE_INTEGER       mStart_                 = {};           // !< スタート時のカウント数
+    double              mPlayTimingSec_         = {};           // !< 再生が始まったタイミング
     double              elapsedTime_            = {};           // !< 経過時間
     double              elapsedBeat_            = {};           // !< 拍をうってからの経過時間
     size_t              notelistSize_           = {};           // !< ノートリストのサイズ (デバッグ用)
@@ -73,7 +76,6 @@ private:
     unsigned int        countBeatShifted_       = 0u;           // !< シフト後の拍カウント
     unsigned int        countMeasure_           = 0u;           // !< 小節数カウント
     unsigned int        countMeasureShifted_    = 0u;           // !< シフト後の小節数カウント
-    Model*              pModelSkydome_          = nullptr;      // !< 天球モデル
     float               musicVolume_            = {};           // !< 音楽ボリューム
     double              secNextBeat_            = 0.0;          // !< 拍と拍の間隔
     std::thread         thread_loading_         = {};           // !< 読み込み用スレッド
