@@ -14,3 +14,11 @@ enum class HitResult
 	Great,
 	Bad
 };
+
+enum class Scenes
+{
+	Title,
+	Select,
+	RhythmGame,
+	Result
+};

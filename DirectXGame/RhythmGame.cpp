@@ -12,6 +12,8 @@
 #include <cassert>
 #include <Sprite.h>
 #include <TextureManager.h>
+#include <Windows.h>
+#include <format>
 
 RhythmGame::~RhythmGame()
 {
@@ -52,13 +54,17 @@ void RhythmGame::Initialize()
     sheetpath_ = "im_here.xml";
     sheetmusic_ = pLoadScore_->Load(sheetpath_);
 
-    /// メインソングのロード(別スレッドにて)
-    /* 楽譜データに楽曲パスが含まれているため楽譜データの読み込みより早く実行してはいけない */
-    thread_loading_ = std::thread(&RhythmGame::LoadingThreadProcess, this);
-
     /// QPFの使用可否を取得
     bool qpfCompatible = QueryPerformanceFrequency(&mFreq_);
     assert(qpfCompatible && "QueryPerformanceFrequencyが非対応です");
+    QueryPerformanceCounter(&mStart_);
+    LARGE_INTEGER mNow;
+    QueryPerformanceCounter(&mNow);
+    elapsedTime_ = static_cast<double>(mNow.QuadPart - mStart_.QuadPart) / static_cast<double>(mFreq_.QuadPart);
+
+    /// メインソングのロード(別スレッドにて)
+    /* 楽譜データに楽曲パスが含まれているため楽譜データの読み込みより早く実行してはいけない */
+    thread_loading_ = std::thread(&RhythmGame::LoadingThreadProcess, this);
 
     /// デバッグで使用するデータを登録
     pDebugOperationData_->pElapsedTime = &elapsedTime_;
@@ -71,10 +77,12 @@ void RhythmGame::Initialize()
     pDebugOperationData_->pVolume = &musicVolume_;
     pDebugOperationData_->pIsChangeVolume = &isChangeMusicVolume_;
     pDebugOperationData_->pCountMeasure = &countMeasure_;
+    pDebugOperationData_->pHitCount = &hitCount_;
 
-    elapsedTime_ = -100.0;
     musicVolume_ = 0.05f;
+    playTimingSec_ = 3.02;
 
+    /* 0.005 ~ 0.020 */
     userSettingVelociT_ = 0.005f;
 
     /// 一小節目のデータを予め解読
@@ -91,17 +99,37 @@ void RhythmGame::Initialize()
 
 void RhythmGame::Update()
 {
+    // 現在のカウント
+    LARGE_INTEGER mNow;
+    QueryPerformanceCounter(&mNow);
+    // 経過時間計算
+    elapsedTime_ =
+        static_cast<double>(mNow.QuadPart - mStart_.QuadPart) / static_cast<double>(mFreq_.QuadPart);
+
     pLane_->Update();
     if (!isOpenPopupModal_)
     {
-        if (pInput_->TriggerKey(DIK_F) || pInput_->TriggerKey(DIK_J))
+        if (pInput_->TriggerKey(DIK_F))
         {
             pAudio_->PlayWave(hKick_, false, 0.3f);
+            Judge(Direction::Left);
         }
-        if (pInput_->TriggerKey(DIK_D) || pInput_->TriggerKey(DIK_K))
+        if (pInput_->TriggerKey(DIK_J))
+        {
+            pAudio_->PlayWave(hKick_, false, 0.3f);
+            Judge(Direction::Left);
+        }
+        if (pInput_->TriggerKey(DIK_D))
         {
             pAudio_->PlayWave(hSnare_, false, 0.3f);
+            Judge(Direction::Right);
         }
+        if (pInput_->TriggerKey(DIK_K))
+        {
+            pAudio_->PlayWave(hSnare_, false, 0.3f);
+            Judge(Direction::Right);
+        }
+
         if (pInput_->TriggerKey(DIK_H) || requestReload_)
         {
             HotReloadInitialize();
@@ -117,9 +145,8 @@ void RhythmGame::Update()
     if (isEndLoad_)
     {
         playHandle_Song_ = pAudio_->PlayWave(hSong_, false, musicVolume_);
-        QueryPerformanceCounter(&mStart_);
+        playTimingSec_ = elapsedTime_;
         countBeat_ = 0u;
-        countBeatShifted_ = 0u;
         countMeasure_ = 0u;
         countMeasureShifted_ = 0u;
         thread_loading_.join();
@@ -143,6 +170,7 @@ void RhythmGame::Update()
     );
 
     notelistSize_ = pNoteList_.size();
+    pJudgeTiming_->Update();
 }
 
 void RhythmGame::DrawSpriteBackGround()
@@ -179,25 +207,15 @@ void RhythmGame::UpdateRhythmGame()
     if (pAudio_->IsPlaying(playHandle_Song_)) isPlaying_ = true;
     else isPlaying_ = false;
 
-    if (!isPlaying_) enableMetronome_ = false;
-    else
-    {
-        secNextBeat_ = 60.0 / static_cast<double>(sheetmusic_.bpm);
+    secNextBeat_ = 60.0 / static_cast<double>(sheetmusic_.bpm);
 
-        // 現在のカウント
-        LARGE_INTEGER mNow;
-        QueryPerformanceCounter(&mNow);
-        // 経過時間計算
-        elapsedTime_ =
-            static_cast<double>(mNow.QuadPart - mStart_.QuadPart) / static_cast<double>(mFreq_.QuadPart);
-        elapsedTime_ -= static_cast<double>(sheetmusic_.offset) * 0.001;
-    }
+    if (!isPlaying_) enableMetronome_ = false;
 
     /// 譜面データを読みながらノートを作成
     MakeNoteFromSheet();
     
     // 4分インターバル
-    if (elapsedTime_ >= secNextBeat_ * countBeat_)
+    if (elapsedTime_ - playTimingSec_ - sheetmusic_.offset * 0.001 >= secNextBeat_ * countBeat_)
     {
         if (countBeat_ % 4 == 0)
         {
@@ -215,7 +233,6 @@ void RhythmGame::UpdateRhythmGame()
 
 void RhythmGame::HotReloadInitialize()
 {
-    elapsedTime_ = -100.0;
     pAudio_->StopWave(playHandle_Song_);
     sheetmusic_ = pLoadScore_->Load(sheetpath_);
     
@@ -239,8 +256,11 @@ void RhythmGame::MakeNoteFromSheet()
 {
     if (nextNoteSymbol_.first.size() == 0) return;
     double shiftTime = 1.0 / static_cast<double>(userSettingVelociT_) / 60.0;
+    double nBeatTime = secNextBeat_ * countBeatShifted_ - shiftTime;
+    
     // 4分
-    if (elapsedTime_ >= (secNextBeat_ * countBeatShifted_) - shiftTime && nextNoteSymbol_.second == 4u)
+    if (elapsedTime_ - playTimingSec_ - sheetmusic_.offset * 0.001 >= nBeatTime &&
+        nextNoteSymbol_.second == 4u)
     {
         if (countBeatShifted_ % 4 == 0)
         {
@@ -262,6 +282,11 @@ void RhythmGame::MakeNoteFromSheet()
             MakeNote(Direction::Right);
             GetNextNoteSymbol();
         }
+        if (elapsedTime_ - secPreBeat_ < secNextBeat_)
+        {
+            OutputDebugStringA(std::format("### INCORRECT TIMING ### [Time = {}]\n", elapsedTime_).c_str());
+        }
+        secPreBeat_ = elapsedTime_;
         countBeatShifted_++;
     }
 }
@@ -282,7 +307,45 @@ void RhythmGame::GetNextNoteSymbol()
 
 void RhythmGame::LoadingThreadProcess()
 {
+    timeBeginPeriod(1);
+
+    const double minWaitTime = 3.0;
+    double loadBeginTime = elapsedTime_;
+    
     isEndLoad_ = false;
     hSong_ = pAudio_->LoadWave(sheetmusic_.sourcePath);
+    
+    double stopThreadTime = minWaitTime - (elapsedTime_ - loadBeginTime);
+    OutputDebugStringA(std::format("stopThreadTime = {}\n", stopThreadTime).c_str());
+    if (stopThreadTime > 0)
+    {
+        Sleep(static_cast<DWORD>(stopThreadTime * 1000));
+    }
+
     isEndLoad_ = true;
+    timeEndPeriod(1);
+}
+
+void RhythmGame::Judge(Direction _dir)
+{
+    HitResult hitResult = {};
+    Note* note = pJudgeTiming_->Judge(_dir, hitResult);
+    
+    if (!note) return;
+
+    switch (hitResult)
+    {
+    case HitResult::Perfect:
+        hitCount_.perfect++;
+        break;
+    case HitResult::Great:
+        hitCount_.great++;
+        break;
+    case HitResult::Bad:
+        hitCount_.bad++;
+        break;
+    default:
+        break;
+    }
+    note->SetIsDead();
 }

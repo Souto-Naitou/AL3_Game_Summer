@@ -3,10 +3,9 @@
 const unsigned int kScreenWidth     = 1280u;
 const unsigned int kScreenHeight    = 720u;
 
-enum class Scenes
+struct HitCount
 {
-	Title,
-	Select,
-	RhythmGame,
-	Result
+	unsigned int perfect;
+	unsigned int great;
+	unsigned int bad;
 };

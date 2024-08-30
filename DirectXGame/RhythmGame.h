@@ -5,6 +5,7 @@
 #include "EnumClass.h"
 #include "SheetMusic.h"
 #include "ImGuiWindow.h"
+#include "define.h"
 
 #include <list>
 #include <queue>
@@ -63,7 +64,7 @@ private:
     uint32_t            hBackgound_             = 0u;           // !< 背景スプライト
     LARGE_INTEGER       mFreq_                  = {};           // !< 1秒間のカウント数
     LARGE_INTEGER       mStart_                 = {};           // !< スタート時のカウント数
-    double              mPlayTimingSec_         = {};           // !< 再生が始まったタイミング
+    double              playTimingSec_          = {};           // !< 再生が始まったタイミング
     double              elapsedTime_            = {};           // !< 経過時間
     double              elapsedBeat_            = {};           // !< 拍をうってからの経過時間
     size_t              notelistSize_           = {};           // !< ノートリストのサイズ (デバッグ用)
@@ -81,10 +82,13 @@ private:
     std::thread         thread_loading_         = {};           // !< 読み込み用スレッド
     bool                isEndLoad_              = false;        // !< 読み込み完了したか
     float               userSettingVelociT_     = 0.0f;         // !< ユーザーが設定した速度t
+    HitCount            hitCount_               = {};           // !< ヒット回数カウント
 
     ImGuiWindow::DebugOperationData* pDebugOperationData_ = nullptr; // !< デバッグ操作データ (借りてくる)
     std::queue<std::pair<std::string, unsigned int>> sheetDataQueue_ = {}; // !< 譜面データキュー
     std::pair<std::string, unsigned int> nextNoteSymbol_ = {}; // !< 次のノート記号 (sheetキューから取ってくる)
+
+    double              secPreBeat_             = 0.0;          // !< 1つ前の拍の時間（デバッグ用）
 
     /// 関数
     void MakeNote(Direction _beginLane);
@@ -93,4 +97,5 @@ private:
     void MakeNoteFromSheet();
     void GetNextNoteSymbol();
     void LoadingThreadProcess();
+    void Judge(Direction _dir);
 };

@@ -4,6 +4,7 @@
 #include "PrimitiveDrawer.h"
 #include "ImGuiWindow.h"
 #include "TitleScene.h"
+#include "define.h"
 
 GameScene::GameScene()
 {
@@ -24,7 +25,8 @@ void GameScene::Initialize() {
 	worldTransform_.Initialize();
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
 	pCamera = new Camera();
-	pCamera->Initialize({ 0.0f, 2.6f, -43.5f }, { 0.47f, 0.0f, 0.0f });
+	//pCamera->Initialize({ 0.0f, 2.6f, -43.5f }, { 0.47f, 0.0f, 0.0f });
+	pCamera->Initialize({ 0.0f, 13.8f, -50.45f }, { 0.85f, 0.0f, 0.0f });
 	pDebugCamera_ = new DebugCamera(kScreenWidth, kScreenHeight);
 	imguiWindow_ = new ImGuiWindow();
 	imguiWindow_->SetDebugOperationData(&debugOperationData_);

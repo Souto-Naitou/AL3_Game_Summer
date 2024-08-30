@@ -13,7 +13,7 @@
 #include "ImGuiWindow.h"
 #include "Note.h"
 #include "RhythmGame.h"
-#include "define.h"
+#include "EnumClass.h"
 
 
 

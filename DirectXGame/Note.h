@@ -28,6 +28,7 @@ public:
     void SetBeginLane(Direction _dir);
     
     bool GetIsDead() { return isDead_; }
+    void SetIsDead() { isDead_ = true; }
 
     Direction   GetBeginLane() { return beginLane_; }
     float       GetTimeLane() { return time_Lane_; }
