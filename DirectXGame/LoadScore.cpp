@@ -69,6 +69,7 @@ void LoadScore::Interpretation(std::stringstream& _file)
 		else if (tag == "source") sheetmusic_.sourcePath = content;
 		else if (tag == "bpm") content_stream >> sheetmusic_.bpm;
 		else if (tag == "offset") content_stream >> sheetmusic_.offset;
+		else if (tag == "length") content_stream >> sheetmusic_.length;
 		else if (tag == "data" && content.size())
 		{
 			sheetmusic_.sheetData.push_back({});

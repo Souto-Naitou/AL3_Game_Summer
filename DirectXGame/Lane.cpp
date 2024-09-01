@@ -19,7 +19,7 @@ void Lane::Initialize()
 
 	// laneDataの初期化
 	laneData_.direction = Vector3(0.0f, 0.0f, -1.0f); // -z方向を前に
-	laneData_.interval = 5.0f;
+	laneData_.interval = 10.0f;
 	laneData_.length = 40.0f;
 
 	// モデル生成
@@ -38,6 +38,8 @@ void Lane::Update()
 	laneData_.right[1] = laneData_.right[0];
 	laneData_.left[1] = Add(laneData_.left[0], Multiply(laneData_.length, laneData_.direction));
 	laneData_.right[1] = Add(laneData_.right[0], Multiply(laneData_.length, laneData_.direction));
+	laneData_.left[1].x = 0;
+	laneData_.right[1].x = 0;
 
 }
 

@@ -24,6 +24,9 @@ public:
         bool*           pIsChangeVolume;
         unsigned int*   pCountMeasure;
         HitCount*       pHitCount;
+        double*         pElapsedTimeShifted;
+        double*         pFramelate;
+        BeatCount*      pBeatCount;
     };
 
     ImGuiWindow() {};

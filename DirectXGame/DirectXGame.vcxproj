@@ -116,9 +116,12 @@
     <ClCompile Include="math\MathExtension\mathExtension.cpp" />
     <ClCompile Include="math\Matrix4x4.cpp" />
     <ClCompile Include="math\Matrix4x4\calc\matrix4calc.cpp" />
+    <ClCompile Include="math\Vector2.cpp" />
     <ClCompile Include="math\Vector3.cpp" />
     <ClCompile Include="math\Vector3\calc\vector3calc.cpp" />
     <ClCompile Include="Note.cpp" />
+    <ClCompile Include="PhillEasing.cpp" />
+    <ClCompile Include="ResultScene.cpp" />
     <ClCompile Include="RhythmGame.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -163,6 +166,7 @@
     <ClInclude Include="math\Vector3.h" />
     <ClInclude Include="math\Vector3\calc\vector3calc.h" />
     <ClInclude Include="math\Vector4.h" />
+    <ClInclude Include="Phill.h" />
     <ClInclude Include="RhythmGame.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="Note.h" />
@@ -172,6 +176,7 @@
     <ClInclude Include="Skydome.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="JudgeTiming.h" />
+    <ClInclude Include="ResultScene.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\TerrainPS.hlsl">

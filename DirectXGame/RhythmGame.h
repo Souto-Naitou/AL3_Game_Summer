@@ -42,7 +42,7 @@ public:
 
     void SetGameScene(GameScene* _gameScene) { pGameScene_ = _gameScene; }
     void SetDebugOperationData(ImGuiWindow::DebugOperationData* _dod) { pDebugOperationData_ = _dod; }
-    //float GetUserSettingVelociT() { return userSettingVelociT_; }
+    HitCount GetHitCount() { return hitCount_; }
 
 private:
 
@@ -61,28 +61,34 @@ private:
     uint32_t            playHandle_Song_        = 0u;           // !< 再生ハンドル
     uint32_t            hKick_                  = 0u;           // !< キック
     uint32_t            hSnare_                 = 0u;           // !< スネア
+    uint32_t            hPiNigo_                = 0u;           // !< 濁ったピッ
     uint32_t            hBackgound_             = 0u;           // !< 背景スプライト
     LARGE_INTEGER       mFreq_                  = {};           // !< 1秒間のカウント数
     LARGE_INTEGER       mStart_                 = {};           // !< スタート時のカウント数
     double              playTimingSec_          = {};           // !< 再生が始まったタイミング
     double              elapsedTime_            = {};           // !< 経過時間
-    double              elapsedBeat_            = {};           // !< 拍をうってからの経過時間
+    double              elapsedTimeShifted_     = {};           // !< いろいろシフトした経過時間
+    double              elapsedMakeNote         = {};           // !< 拍をうってからの経過時間
+    double              elapsedFrameCount_      = {};           // !< フレームレート用経過時間
     size_t              notelistSize_           = {};           // !< ノートリストのサイズ (デバッグ用)
     bool                enableMetronome_        = true;         // !< メトロノームが有効か
     bool                isPlaying_              = false;        // !< 再生中か
     bool                requestReload_          = false;        // !< リロードが要求されたか
     bool                isOpenPopupModal_       = false;        // !< ポップアップが開いているかどうか
     bool                isChangeMusicVolume_    = {};           // !< ボリューム変更検出用フラグ
+    bool                isEndLoad_              = false;        // !< 読み込み完了したか
     unsigned int        countBeat_              = 0u;           // !< 拍回数
-    unsigned int        countBeatShifted_       = 0u;           // !< シフト後の拍カウント
+    BeatCount           beatCount_              = {};           // !< 拍回数カウンタ
     unsigned int        countMeasure_           = 0u;           // !< 小節数カウント
     unsigned int        countMeasureShifted_    = 0u;           // !< シフト後の小節数カウント
     float               musicVolume_            = {};           // !< 音楽ボリューム
-    double              secNextBeat_            = 0.0;          // !< 拍と拍の間隔
+    BeatDuration        beatDuration_           = {};           // !< 長さの定義
     std::thread         thread_loading_         = {};           // !< 読み込み用スレッド
-    bool                isEndLoad_              = false;        // !< 読み込み完了したか
-    float               userSettingVelociT_     = 0.0f;         // !< ユーザーが設定した速度t
+    double              userSettingVelociT_     = 0.0f;         // !< ユーザーが設定した速度t
     HitCount            hitCount_               = {};           // !< ヒット回数カウント
+    unsigned int        frameCount_             = 0u;           // !< フレーム数
+    double              deltaTime_              = 0;            // !< デルタ時間
+    double              fps_                    = 57;           // !< フレームレート
 
     ImGuiWindow::DebugOperationData* pDebugOperationData_ = nullptr; // !< デバッグ操作データ (借りてくる)
     std::queue<std::pair<std::string, unsigned int>> sheetDataQueue_ = {}; // !< 譜面データキュー
@@ -91,11 +97,13 @@ private:
     double              secPreBeat_             = 0.0;          // !< 1つ前の拍の時間（デバッグ用）
 
     /// 関数
-    void MakeNote(Direction _beginLane);
+    void MakeNote(Direction _beginLane, double _startT);
     void UpdateRhythmGame();
     void HotReloadInitialize();
     void MakeNoteFromSheet();
     void GetNextNoteSymbol();
     void LoadingThreadProcess();
     void Judge(Direction _dir);
+    double CalculateElapsedTime();
+    void JudgeSymbolAndMakeNote(double _errorTime);
 };

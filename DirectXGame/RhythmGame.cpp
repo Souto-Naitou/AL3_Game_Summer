@@ -49,9 +49,10 @@ void RhythmGame::Initialize()
     hCagw_ = pAudio_->LoadWave("se/cagw.wav");
     hKick_ = pAudio_->LoadWave("se/kick.wav");
     hSnare_ = pAudio_->LoadWave("se/snare.wav");
+    hPiNigo_ = pAudio_->LoadWave("se/pinigo.wav");
 
     /// 楽譜データのロード
-    sheetpath_ = "im_here.xml";
+    sheetpath_ = "Boukyousei_Signal.xml";
     sheetmusic_ = pLoadScore_->Load(sheetpath_);
 
     /// QPFの使用可否を取得
@@ -78,14 +79,17 @@ void RhythmGame::Initialize()
     pDebugOperationData_->pIsChangeVolume = &isChangeMusicVolume_;
     pDebugOperationData_->pCountMeasure = &countMeasure_;
     pDebugOperationData_->pHitCount = &hitCount_;
+    pDebugOperationData_->pElapsedTimeShifted = &elapsedTimeShifted_;
+    pDebugOperationData_->pFramelate = &fps_;
+    pDebugOperationData_->pBeatCount = &beatCount_;
 
     musicVolume_ = 0.05f;
-    playTimingSec_ = 3.02;
+    playTimingSec_ = 5.02;
 
     /* 0.005 ~ 0.020 */
-    userSettingVelociT_ = 0.005f;
+    userSettingVelociT_ = 0.008;
 
-    /// 一小節目のデータを予め解読
+    /// データを予め解読
     for (auto& sheet : sheetmusic_.sheetData)
         for (auto& symbols : sheet)
         {
@@ -99,13 +103,7 @@ void RhythmGame::Initialize()
 
 void RhythmGame::Update()
 {
-    // 現在のカウント
-    LARGE_INTEGER mNow;
-    QueryPerformanceCounter(&mNow);
-    // 経過時間計算
-    elapsedTime_ =
-        static_cast<double>(mNow.QuadPart - mStart_.QuadPart) / static_cast<double>(mFreq_.QuadPart);
-
+    CalculateElapsedTime();
     pLane_->Update();
     if (!isOpenPopupModal_)
     {
@@ -116,26 +114,30 @@ void RhythmGame::Update()
         }
         if (pInput_->TriggerKey(DIK_J))
         {
-            pAudio_->PlayWave(hKick_, false, 0.3f);
-            Judge(Direction::Left);
+            pAudio_->PlayWave(hSnare_, false, 0.3f);
+            Judge(Direction::Right);
         }
         if (pInput_->TriggerKey(DIK_D))
         {
-            pAudio_->PlayWave(hSnare_, false, 0.3f);
-            Judge(Direction::Right);
+            pAudio_->PlayWave(hKick_, false, 0.3f);
+            Judge(Direction::Left);
         }
         if (pInput_->TriggerKey(DIK_K))
         {
             pAudio_->PlayWave(hSnare_, false, 0.3f);
             Judge(Direction::Right);
         }
-
-        if (pInput_->TriggerKey(DIK_H) || requestReload_)
-        {
-            HotReloadInitialize();
-            requestReload_ = false;
-        }
     }
+
+    /// フレームレート計算
+    if (elapsedTime_ - elapsedFrameCount_ >= 2.0)
+    {
+        fps_ = frameCount_ * 1.0 / (elapsedTime_ - elapsedFrameCount_);
+
+        frameCount_ = 0;
+        elapsedFrameCount_ = elapsedTime_;
+    }
+    frameCount_++;
 
     /// ボリューム設定
     if (isChangeMusicVolume_)
@@ -145,7 +147,8 @@ void RhythmGame::Update()
     if (isEndLoad_)
     {
         playHandle_Song_ = pAudio_->PlayWave(hSong_, false, musicVolume_);
-        playTimingSec_ = elapsedTime_;
+        isPlaying_ = true;
+        playTimingSec_ = CalculateElapsedTime();
         countBeat_ = 0u;
         countMeasure_ = 0u;
         countMeasureShifted_ = 0u;
@@ -160,6 +163,21 @@ void RhythmGame::Update()
     for (Note* note : pNoteList_)
     {
         note->Update();
+        bool ispi = note->GetIsPi();
+        if (!ispi)
+        {
+            if (note->GetTimeLane() >= 1.0f)
+            {
+                note->SetIsPi();
+                pAudio_->PlayWave(hPiNigo_, false, 0.3f);
+                double quarterDebug = elapsedTime_ - elapsedMakeNote;
+                OutputDebugStringA(std::format("quarterDebug = {}\n", quarterDebug).c_str());
+            }
+        }
+        if (note->GetIsDead() && note->GetTimeLane() >= 1.45f)
+        {
+            hitCount_.bad++;
+        }
     }
 
     /// Destroy
@@ -190,7 +208,7 @@ void RhythmGame::Draw3D(const ViewProjection& _viewProjection)
     pJudgeTiming_->Draw3D(_viewProjection);
 }
 
-void RhythmGame::MakeNote(Direction _beginLane)
+void RhythmGame::MakeNote(Direction _beginLane, double _startT)
 {
     pNoteList_.push_back(new Note());
     Note* backNote = pNoteList_.back();
@@ -198,16 +216,22 @@ void RhythmGame::MakeNote(Direction _beginLane)
     backNote->SetBeginLane(_beginLane);
     backNote->SetLaneData(pLane_->GetLaneData());
     backNote->SetUserSettingVelociT(&userSettingVelociT_);
+    backNote->SetTimeLane(_startT);
     return;
 }
 
 void RhythmGame::UpdateRhythmGame()
 {
     // 再生中チェック
-    if (pAudio_->IsPlaying(playHandle_Song_)) isPlaying_ = true;
-    else isPlaying_ = false;
+    if (elapsedTime_ - playTimingSec_ >= sheetmusic_.length * 0.001) 
+    {
+        pGameScene_->ReserveSceneChange(Scenes::Result);
+    }
+    
 
-    secNextBeat_ = 60.0 / static_cast<double>(sheetmusic_.bpm);
+    beatDuration_.quarter   = 60.0 / static_cast<double>(sheetmusic_.bpm);
+    beatDuration_.eighth    = 60.0 / static_cast<double>(sheetmusic_.bpm) * 0.5;
+    beatDuration_.sixteenth = 60.0 / static_cast<double>(sheetmusic_.bpm) * 0.25;
 
     if (!isPlaying_) enableMetronome_ = false;
 
@@ -215,7 +239,7 @@ void RhythmGame::UpdateRhythmGame()
     MakeNoteFromSheet();
     
     // 4分インターバル
-    if (elapsedTime_ - playTimingSec_ - sheetmusic_.offset * 0.001 >= secNextBeat_ * countBeat_)
+    if (CalculateElapsedTime() - playTimingSec_ - sheetmusic_.offset * 0.001 >= beatDuration_.quarter * countBeat_)
     {
         if (countBeat_ % 4 == 0)
         {
@@ -254,40 +278,76 @@ void RhythmGame::HotReloadInitialize()
 
 void RhythmGame::MakeNoteFromSheet()
 {
-    if (nextNoteSymbol_.first.size() == 0) return;
-    double shiftTime = 1.0 / static_cast<double>(userSettingVelociT_) / 60.0;
-    double nBeatTime = secNextBeat_ * countBeatShifted_ - shiftTime;
-    
-    // 4分
-    if (elapsedTime_ - playTimingSec_ - sheetmusic_.offset * 0.001 >= nBeatTime &&
-        nextNoteSymbol_.second == 4u)
+    double shiftTime        = 1.0 / userSettingVelociT_ / fps_; // 3.33333
+    double quarterTime      = beatDuration_.quarter     *   beatCount_.quarterCount   -     shiftTime;
+    double eighthTime       = beatDuration_.eighth      *   beatCount_.eighthCount    -     shiftTime;
+    double sixteenthTime    = beatDuration_.sixteenth   *   beatCount_.sixteenthCount -     shiftTime;
+    double errorTime        = 0;
+    double startFixedErrorT = 0;
+    elapsedTimeShifted_ = CalculateElapsedTime() - playTimingSec_ - sheetmusic_.offset * 0.001;
+
+    /// 4分
+    if (elapsedTimeShifted_ >= quarterTime && nextNoteSymbol_.second == 4u)
     {
-        if (countBeatShifted_ % 4 == 0)
+        errorTime = elapsedTimeShifted_ - quarterTime;
+        startFixedErrorT = errorTime / shiftTime;
+        if (beatCount_.quarterCount % 4 == 0)
         {
             countMeasureShifted_++;
         }
         if (nextNoteSymbol_.first == "L")
         {
-            MakeNote(Direction::Left);
+            elapsedMakeNote = elapsedTime_;
+            MakeNote(Direction::Left, startFixedErrorT);
             GetNextNoteSymbol();
         }
         else if (nextNoteSymbol_.first == "R")
         {
-            MakeNote(Direction::Right);
+            MakeNote(Direction::Right, startFixedErrorT);
             GetNextNoteSymbol();
         }
         else if (nextNoteSymbol_.first == "LR" || nextNoteSymbol_.first == "RL")
         {
-            MakeNote(Direction::Left);
-            MakeNote(Direction::Right);
+            MakeNote(Direction::Left, startFixedErrorT);
+            MakeNote(Direction::Right, startFixedErrorT);
             GetNextNoteSymbol();
         }
-        if (elapsedTime_ - secPreBeat_ < secNextBeat_)
+        else if (nextNoteSymbol_.first == "_")
         {
-            OutputDebugStringA(std::format("### INCORRECT TIMING ### [Time = {}]\n", elapsedTime_).c_str());
+            GetNextNoteSymbol();
+        }
+        if (elapsedTime_ - secPreBeat_ < beatDuration_.quarter)
+        {
+            OutputDebugStringA(std::format("### INCORRECT TIMING ### [Time = {}]\n", CalculateElapsedTime()).c_str());
         }
         secPreBeat_ = elapsedTime_;
-        countBeatShifted_++;
+        beatCount_.quarterCount++;
+        beatCount_.eighthCount += 2;
+        beatCount_.sixteenthCount += 4;
+    }
+    /// 8分
+    else if (elapsedTimeShifted_ >= eighthTime && nextNoteSymbol_.second == 8u)
+    {
+        errorTime = elapsedTimeShifted_ - eighthTime;
+        startFixedErrorT = errorTime / shiftTime;
+
+        JudgeSymbolAndMakeNote(startFixedErrorT);
+
+        beatCount_.eighthCount++;
+        beatCount_.sixteenthCount += 2;
+        if (beatCount_.eighthCount % 2 == 0) beatCount_.quarterCount++;
+    }
+    /// 16分
+    else if (elapsedTimeShifted_ >= sixteenthTime && nextNoteSymbol_.second == 16u)
+    {
+        errorTime = elapsedTimeShifted_ - sixteenthTime;
+        startFixedErrorT = errorTime / shiftTime;
+
+        JudgeSymbolAndMakeNote(startFixedErrorT);
+
+        beatCount_.sixteenthCount++;
+        if (beatCount_.sixteenthCount % 4 == 0) beatCount_.quarterCount++;
+        if (beatCount_.sixteenthCount % 2 == 0) beatCount_.eighthCount++;
     }
 }
 
@@ -302,28 +362,27 @@ void RhythmGame::GetNextNoteSymbol()
     {
         nextNoteSymbol_ = std::pair<std::string, unsigned int>();
     }
-
 }
 
 void RhythmGame::LoadingThreadProcess()
 {
-    timeBeginPeriod(1);
 
-    const double minWaitTime = 3.0;
-    double loadBeginTime = elapsedTime_;
+    const double minWaitTime = 5.0;
+    double loadBeginTime = CalculateElapsedTime();
     
     isEndLoad_ = false;
     hSong_ = pAudio_->LoadWave(sheetmusic_.sourcePath);
     
-    double stopThreadTime = minWaitTime - (elapsedTime_ - loadBeginTime);
+    double stopThreadTime = minWaitTime - (CalculateElapsedTime() - loadBeginTime);
     OutputDebugStringA(std::format("stopThreadTime = {}\n", stopThreadTime).c_str());
     if (stopThreadTime > 0)
     {
         Sleep(static_cast<DWORD>(stopThreadTime * 1000));
     }
 
+    OutputDebugStringA(std::format("Thread Elapsed Time = {}\n", CalculateElapsedTime() - loadBeginTime).c_str());
+
     isEndLoad_ = true;
-    timeEndPeriod(1);
 }
 
 void RhythmGame::Judge(Direction _dir)
@@ -348,4 +407,38 @@ void RhythmGame::Judge(Direction _dir)
         break;
     }
     note->SetIsDead();
+}
+
+double RhythmGame::CalculateElapsedTime()
+{
+    // 現在のカウント
+    LARGE_INTEGER mNow;
+    QueryPerformanceCounter(&mNow);
+    elapsedTime_ =
+        static_cast<double>(mNow.QuadPart - mStart_.QuadPart) / static_cast<double>(mFreq_.QuadPart);
+    return elapsedTime_;
+}
+
+void RhythmGame::JudgeSymbolAndMakeNote(double _startFixedErrorT)
+{
+    if (nextNoteSymbol_.first == "L")
+    {
+        MakeNote(Direction::Left, _startFixedErrorT);
+        GetNextNoteSymbol();
+    }
+    else if (nextNoteSymbol_.first == "R")
+    {
+        MakeNote(Direction::Right, _startFixedErrorT);
+        GetNextNoteSymbol();
+    }
+    else if (nextNoteSymbol_.first == "LR" || nextNoteSymbol_.first == "RL")
+    {
+        MakeNote(Direction::Left, _startFixedErrorT);
+        MakeNote(Direction::Right, _startFixedErrorT);
+        GetNextNoteSymbol();
+    }
+    else if (nextNoteSymbol_.first == "_")
+    {
+        GetNextNoteSymbol();
+    }
 }

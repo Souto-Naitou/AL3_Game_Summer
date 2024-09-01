@@ -1,0 +1,9 @@
+<title>Niji no nemoto made</title>
+<source>song/song3.mp3</source>
+<bpm>118</bpm>
+<offset>534</offset>
+<data>
+    4R,4R,4R,8L,8R
+    8L,8R,8L,16R,16L,4_,16L,16R,16L,16R
+    4R,16R,16_,16_,16R,8_,8L,8L,8L
+</data>

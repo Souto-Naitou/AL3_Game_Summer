@@ -40,9 +40,15 @@ void ImGuiWindow::Window_RhythmGame()
         ImGui::PushID("RHYTHMGAME");
 
         ImGui::SeparatorText("Game Debug Info");
+        ImGui::Text("Framelate : %.1lf", *pDebugOperationData_->pFramelate);
         ImGui::Text("Elapsed Time : %lf", *pDebugOperationData_->pElapsedTime);
+        ImGui::Text("Elapsed Time Shifted : %lf", *pDebugOperationData_->pElapsedTimeShifted);
         ImGui::Text("NoteList Size : %d", *pDebugOperationData_->pNoteListSize);
         ImGui::Text("Measure : %u", *pDebugOperationData_->pCountMeasure);
+
+        ImGui::Text("4: %u", pDebugOperationData_->pBeatCount->quarterCount);
+        ImGui::Text("8: %u", pDebugOperationData_->pBeatCount->eighthCount);
+        ImGui::Text("16: %u", pDebugOperationData_->pBeatCount->sixteenthCount);
 
         ImGui::SeparatorText("Game Setting");
         if (ImGui::Button("Look SheetMusicData"))

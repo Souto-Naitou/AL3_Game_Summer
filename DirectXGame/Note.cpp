@@ -2,6 +2,7 @@
 #include <cassert>
 #include "TextureManager.h"
 #include "Vector3/calc/vector3calc.h"
+#include <format>
 
 Note::Note()
 {
@@ -17,7 +18,7 @@ void Note::Initialize()
     worldTransform_.Initialize();
     pModel_ = Model::Create();
     modelTexture_ = TextureManager::Load("white1x1.png");
-    worldTransform_.scale_ = { 0.3f, 0.01f, 0.1f };
+    worldTransform_.scale_ = { 0.5f, 0.1f, 0.1f };
 }
 
 void Note::Update()
@@ -30,7 +31,7 @@ void Note::Update()
     }
 
     /// 処理
-    if (time_Lane_ == 0.0f) // Updateが最初に呼び出されたときのみ実行
+    if (countUpdate_ == 0u) // Updateが最初に呼び出されたときのみ実行
     {
         if (beginLane_ == Direction::Left)
         {
@@ -51,15 +52,17 @@ void Note::Update()
             assert(0 && "beginLane_の値が不正です。");
             return;
         }
+        OutputDebugStringA(std::format("first t = {}\n", time_Lane_).c_str());
     }
     
     // tに従って移動する
-    worldTransform_.translation_ = (1.0f - time_Lane_) * laneBegin_ + time_Lane_ * laneEnd_;
+    worldTransform_.translation_ = (1.0f - static_cast<float>(time_Lane_)) * laneBegin_ + static_cast<float>(time_Lane_) * laneEnd_;
 
     if (time_Lane_ >= 1.5f) isDead_ = true;
 
     time_Lane_ += *userSettingVelociT_;
     worldTransform_.UpdateMatrix();
+    countUpdate_++;
 }
 
 void Note::Draw3D(const ViewProjection& _viewProjection)

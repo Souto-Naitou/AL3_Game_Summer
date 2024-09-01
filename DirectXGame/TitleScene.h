@@ -14,11 +14,11 @@ public:
 
 private:
 
-    unsigned int handle_titleScene = 0u;
+    unsigned int handle_pressSpace = 0u;
     unsigned int handle_title = 0u;
     unsigned int handle_white = 0u;
 
-    Sprite* sprite_titleScene;
+    Sprite* sprite_pressSpace;
     Sprite* sprite_title;
     Sprite* sprite_white;
 

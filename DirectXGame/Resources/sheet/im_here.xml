@@ -4,9 +4,8 @@
 <offset>2526</offset>
 <data>
     4L,4L,4L,4L
-    4LR,4LR,4LR,4LR
-    4LR,4LR,4LR,4LR
-    4LR,4LR,4LR,4LR
-    4LR,4LR,4LR,4LR
-    4LR,4LR,4LR,4LR
+    4L,4L,4_,4L
+    8L,8R,8L,8R,8L,8R,8L,8R
+    4L,8R,8R,4L,8R,8R
+    8L,16R,16R,8L,16R,16R,8L,16R,16R,8L,16R,16R
 </data>

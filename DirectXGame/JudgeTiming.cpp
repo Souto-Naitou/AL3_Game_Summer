@@ -2,8 +2,8 @@
 #include "Note.h"
 #include <format>
 
-const float JudgeTiming::kPerfectRange_[2] = { 0.99f, 1.01f };
-const float JudgeTiming::kGreatRange_[2] = { 0.97f, 1.03f };
+const float JudgeTiming::kPerfectRange_[2] = { 0.98f, 1.02f };
+const float JudgeTiming::kGreatRange_[2] = { 0.96f, 1.04f };
 
 void JudgeTiming::Initialize()
 {
@@ -33,10 +33,13 @@ void JudgeTiming::Draw3D(const ViewProjection& _viewProjection)
     _viewProjection;
     pPrimitiveDrawer_->DrawLine3d(*pLaneEndPoint_[0], *pLaneEndPoint_[1], { 1.0f, 1.0f, 1.0f, 1.0f });
     /// デバッグ用
-    pPrimitiveDrawer_->DrawLine3d(perfectRange_[0], perfectRange_[1], Vector4(0.2f, 0.2f, 1.0f, 1.0f));
-    pPrimitiveDrawer_->DrawLine3d(perfectRange_[2], perfectRange_[3], Vector4(0.2f, 0.2f, 1.0f, 1.0f));
-    pPrimitiveDrawer_->DrawLine3d(greatRange_[0], greatRange_[1], Vector4(0.2f, 1.0f, 0.2f, 1.0f));
-    pPrimitiveDrawer_->DrawLine3d(greatRange_[2], greatRange_[3], Vector4(0.2f, 1.0f, 0.2f, 1.0f));
+    if (true)
+    {
+        pPrimitiveDrawer_->DrawLine3d(perfectRange_[0], perfectRange_[1], Vector4(0.2f, 0.2f, 1.0f, 1.0f));
+        pPrimitiveDrawer_->DrawLine3d(perfectRange_[2], perfectRange_[3], Vector4(0.2f, 0.2f, 1.0f, 1.0f));
+        pPrimitiveDrawer_->DrawLine3d(greatRange_[0], greatRange_[1], Vector4(0.2f, 1.0f, 0.2f, 1.0f));
+        pPrimitiveDrawer_->DrawLine3d(greatRange_[2], greatRange_[3], Vector4(0.2f, 1.0f, 0.2f, 1.0f));
+    }
 }
 
 Note* JudgeTiming::Judge(Direction _laneDir, HitResult& _rtnHitResult)
@@ -44,11 +47,11 @@ Note* JudgeTiming::Judge(Direction _laneDir, HitResult& _rtnHitResult)
     Note* rtnNote = nullptr;
     HitResult rtnHitResult = {};
     _laneDir;
-    float maxTimeLane = 0.0f;
+    double maxTimeLane = 0.0f;
     for (Note* note : *pNoteList_)
     {
         if (note->GetBeginLane() != _laneDir) continue;
-        float currentTimeLane = note->GetTimeLane();
+        double currentTimeLane = note->GetTimeLane();
 
         // greatの判定
         if (currentTimeLane >= kGreatRange_[0] && currentTimeLane <= kGreatRange_[1])
