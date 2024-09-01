@@ -33,15 +33,22 @@ void ImGuiWindow::Window_RhythmGame()
         pDebugOperationData_->pIsReqReload      &&
         pDebugOperationData_->pVolume           &&
         pDebugOperationData_->pIsChangeVolume   &&
-        pDebugOperationData_->pCountMeasure)
+        pDebugOperationData_->pCountMeasure     &&
+        pDebugOperationData_->pHitCount)
     {
         ImGui::Begin("RhythmGame");
         ImGui::PushID("RHYTHMGAME");
 
         ImGui::SeparatorText("Game Debug Info");
+        ImGui::Text("Framelate : %.1lf", *pDebugOperationData_->pFramelate);
         ImGui::Text("Elapsed Time : %lf", *pDebugOperationData_->pElapsedTime);
+        ImGui::Text("Elapsed Time Shifted : %lf", *pDebugOperationData_->pElapsedTimeShifted);
         ImGui::Text("NoteList Size : %d", *pDebugOperationData_->pNoteListSize);
         ImGui::Text("Measure : %u", *pDebugOperationData_->pCountMeasure);
+
+        ImGui::Text("4: %u", pDebugOperationData_->pBeatCount->quarterCount);
+        ImGui::Text("8: %u", pDebugOperationData_->pBeatCount->eighthCount);
+        ImGui::Text("16: %u", pDebugOperationData_->pBeatCount->sixteenthCount);
 
         ImGui::SeparatorText("Game Setting");
         if (ImGui::Button("Look SheetMusicData"))
@@ -93,6 +100,11 @@ void ImGuiWindow::Window_RhythmGame()
         ImGui::Checkbox("Metronome", pDebugOperationData_->pEnableMetronome);
 
         *pDebugOperationData_->pIsChangeVolume = ImGui::SliderFloat("Music Volume", pDebugOperationData_->pVolume, 0.0f, 1.0f, "%.2f");
+
+        ImGui::SeparatorText("Game Play Data");
+        ImGui::TextColored({ 0.0f, 0.0f, 1.0f, 1.0f }, "PERFECT : %u", pDebugOperationData_->pHitCount->perfect);
+        ImGui::TextColored({ 0.0f, 1.0f, 0.0f, 1.0f }, "GREAT : %u", pDebugOperationData_->pHitCount->great);
+        ImGui::TextColored({ 1.0f, 0.0f, 0.0f, 1.0f }, "BAD : %u", pDebugOperationData_->pHitCount->bad);
 
         ImGui::PopID();
         ImGui::End();

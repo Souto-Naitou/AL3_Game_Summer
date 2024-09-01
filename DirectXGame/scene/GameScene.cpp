@@ -4,15 +4,19 @@
 #include "PrimitiveDrawer.h"
 #include "ImGuiWindow.h"
 #include "TitleScene.h"
+#include "define.h"
+#include <Windows.h>
+#include "ResultScene.h"
 
 GameScene::GameScene()
 {
-
+	timeBeginPeriod(1);
 }
 
 GameScene::~GameScene() 
 {
 	delete pDebugCamera_;
+	timeEndPeriod(1);
 }
 
 void GameScene::Initialize() {
@@ -24,7 +28,8 @@ void GameScene::Initialize() {
 	worldTransform_.Initialize();
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
 	pCamera = new Camera();
-	pCamera->Initialize({ 0.0f, 2.6f, -43.5f }, { 0.47f, 0.0f, 0.0f });
+	pCamera->Initialize({ 0.0f, 3.4f, -43.5f }, { 0.47f, 0.0f, 0.0f });
+	//pCamera->Initialize({ 0.0f, 13.8f, -50.45f }, { 0.85f, 0.0f, 0.0f });
 	pDebugCamera_ = new DebugCamera(kScreenWidth, kScreenHeight);
 	imguiWindow_ = new ImGuiWindow();
 	imguiWindow_->SetDebugOperationData(&debugOperationData_);
@@ -32,11 +37,17 @@ void GameScene::Initialize() {
 	debugOperationData_.pCameraRotation = &pCamera->worldTransform_.rotation_;
 	debugOperationData_.pCameraTranslation = &pCamera->worldTransform_.translation_;
 
-	currentScene_ = Scenes::Title;
-	pTitleScene_ = new TitleScene();
-	pTitleScene_->Initialize();
-	pTitleScene_->SetGameScene(this);
-
+	//currentScene_ = Scenes::Title;
+	//pTitleScene_ = new TitleScene();
+	//pTitleScene_->Initialize();
+	//pTitleScene_->SetGameScene(this);
+	//pRhythmGame_ = new RhythmGame();
+	//pRhythmGame_->SetGameScene(this);
+	//pRhythmGame_->SetDebugOperationData(&debugOperationData_);
+	//pRhythmGame_->Initialize();
+	pResultScene_ = new ResultScene();
+	pResultScene_->SetGameScene(this);
+	pResultScene_->Initialize();
 }
 
 void GameScene::Update()
@@ -64,6 +75,7 @@ void GameScene::Update()
 		pRhythmGame_->Update();
 		break;
 	case Scenes::Result:
+		pResultScene_->Update();
 		break;
 	default:
 		break;
@@ -163,6 +175,7 @@ void GameScene::Draw() {
 	case Scenes::RhythmGame:
 		break;
 	case Scenes::Result:
+		pResultScene_->DrawSpriteFront();
 		break;
 	default:
 		break;
@@ -212,6 +225,15 @@ void GameScene::ChangeScene()
 
 
 	case Scenes::Result:
+		if (pResultScene_)
+		{
+			delete pResultScene_;
+			pResultScene_ = nullptr;
+		}
+		pResultScene_ = new ResultScene();
+		pResultScene_->Initialize();
+		pResultScene_->SetGameScene(this);
+		pResultScene_->SetHitCount(pRhythmGame_->GetHitCount());
 		break;
 	}
 }

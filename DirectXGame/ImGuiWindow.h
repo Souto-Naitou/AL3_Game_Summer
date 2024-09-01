@@ -2,6 +2,7 @@
 #include "Vector3.h"
 #include "SheetMusic.h"
 #include <string>
+#include "define.h"
 
 
 class ImGuiWindow
@@ -22,6 +23,10 @@ public:
         float*          pVolume;
         bool*           pIsChangeVolume;
         unsigned int*   pCountMeasure;
+        HitCount*       pHitCount;
+        double*         pElapsedTimeShifted;
+        double*         pFramelate;
+        BeatCount*      pBeatCount;
     };
 
     ImGuiWindow() {};

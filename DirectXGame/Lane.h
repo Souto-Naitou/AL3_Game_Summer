@@ -41,7 +41,4 @@ private:
     WorldTransform      worldTransform_;
     LaneData            laneData_;
     PrimitiveDrawer*    pPrimitiveDrawer_;
-
-    Vector3 perfectRange_[4];
-    Vector3 greatRange_[4];
 };

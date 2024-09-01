@@ -13,13 +13,13 @@
 #include "ImGuiWindow.h"
 #include "Note.h"
 #include "RhythmGame.h"
-#include "define.h"
-
+#include "EnumClass.h"
 
 
 #include <list>
 
 class TitleScene;
+class ResultScene;
 
 
 /// <summary>
@@ -70,9 +70,10 @@ private: // メンバ変数
     ImGuiWindow*        imguiWindow_        = nullptr;
     RhythmGame*         pRhythmGame_        = nullptr;
     TitleScene*         pTitleScene_        = nullptr;
+    ResultScene*        pResultScene_       = nullptr;
 
-    Scenes              reserveScene_       = Scenes::Title;
-    Scenes              currentScene_       = Scenes::Title;
+    Scenes              reserveScene_       = Scenes::Result;
+    Scenes              currentScene_       = Scenes::Result;
     ImGuiWindow::DebugOperationData debugOperationData_ = {};
 
     bool                enableDebugCamera   = false;
