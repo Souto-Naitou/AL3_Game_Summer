@@ -10,7 +10,6 @@
 #include "Lane.h"
 #include "Camera.h"
 #include "DebugCamera.h"
-#include "ImGuiWindow.h"
 #include "Note.h"
 #include "RhythmGame.h"
 #include "EnumClass.h"
@@ -66,15 +65,12 @@ private: // メンバ変数
     WorldTransform      worldTransform_;
 
     Camera*             pCamera             = nullptr;
-    DebugCamera*        pDebugCamera_       = nullptr;
-    ImGuiWindow*        imguiWindow_        = nullptr;
     RhythmGame*         pRhythmGame_        = nullptr;
     TitleScene*         pTitleScene_        = nullptr;
     ResultScene*        pResultScene_       = nullptr;
 
-    Scenes              reserveScene_       = Scenes::Result;
-    Scenes              currentScene_       = Scenes::Result;
-    ImGuiWindow::DebugOperationData debugOperationData_ = {};
+    Scenes              reserveScene_       = Scenes::Title;
+    Scenes              currentScene_       = Scenes::Title;
 
     bool                enableDebugCamera   = false;
 

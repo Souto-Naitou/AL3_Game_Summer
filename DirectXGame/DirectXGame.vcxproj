@@ -109,7 +109,6 @@
     <ClCompile Include="2d\ImGuiManager.cpp" />
     <ClCompile Include="base\DirectXCommon.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
-    <ClCompile Include="ImGuiWindow.cpp" />
     <ClCompile Include="Lane.cpp" />
     <ClCompile Include="LoadScore.cpp" />
     <ClCompile Include="main.cpp" />
@@ -171,7 +170,6 @@
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="Note.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="ImGuiWindow.h" />
     <ClInclude Include="SheetMusic.h" />
     <ClInclude Include="Skydome.h" />
     <ClInclude Include="TitleScene.h" />

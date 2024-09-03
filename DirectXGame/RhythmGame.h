@@ -36,12 +36,10 @@ public:
 
     void Initialize();
     void Update();
-    void DrawSprite();
     void DrawSpriteBackGround();
     void Draw3D(const ViewProjection& _viewProjection);
 
     void SetGameScene(GameScene* _gameScene) { pGameScene_ = _gameScene; }
-    void SetDebugOperationData(ImGuiWindow::DebugOperationData* _dod) { pDebugOperationData_ = _dod; }
     HitCount GetHitCount() { return hitCount_; }
 
 private:
@@ -63,6 +61,10 @@ private:
     uint32_t            hSnare_                 = 0u;           // !< スネア
     uint32_t            hPiNigo_                = 0u;           // !< 濁ったピッ
     uint32_t            hBackgound_             = 0u;           // !< 背景スプライト
+    uint32_t            hKeyF_                  = 0u;           // !< Fキーハンドル
+    uint32_t            hKeyJ_                  = 0u;           // !< Dキーハンドル
+    Sprite*             sprite_F_               = nullptr;
+    Sprite*             sprite_J_               = nullptr;
     LARGE_INTEGER       mFreq_                  = {};           // !< 1秒間のカウント数
     LARGE_INTEGER       mStart_                 = {};           // !< スタート時のカウント数
     double              playTimingSec_          = {};           // !< 再生が始まったタイミング
@@ -90,11 +92,8 @@ private:
     double              deltaTime_              = 0;            // !< デルタ時間
     double              fps_                    = 57;           // !< フレームレート
 
-    ImGuiWindow::DebugOperationData* pDebugOperationData_ = nullptr; // !< デバッグ操作データ (借りてくる)
     std::queue<std::pair<std::string, unsigned int>> sheetDataQueue_ = {}; // !< 譜面データキュー
     std::pair<std::string, unsigned int> nextNoteSymbol_ = {}; // !< 次のノート記号 (sheetキューから取ってくる)
-
-    double              secPreBeat_             = 0.0;          // !< 1つ前の拍の時間（デバッグ用）
 
     /// 関数
     void MakeNote(Direction _beginLane, double _startT);

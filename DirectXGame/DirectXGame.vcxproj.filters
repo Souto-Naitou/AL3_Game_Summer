@@ -150,9 +150,6 @@
     <ClCompile Include="WorldTransformEx.cpp">
       <Filter>ソース ファイル\3d</Filter>
     </ClCompile>
-    <ClCompile Include="ImGuiWindow.cpp">
-      <Filter>ソース ファイル\debug</Filter>
-    </ClCompile>
     <ClCompile Include="RhythmGame.cpp">
       <Filter>ソース ファイル\rhythmgame</Filter>
     </ClCompile>
@@ -283,9 +280,6 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>ヘッダー ファイル\camera</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGuiWindow.h">
-      <Filter>ヘッダー ファイル\debug</Filter>
     </ClInclude>
     <ClInclude Include="RhythmGame.h">
       <Filter>ヘッダー ファイル\rhythmgame</Filter>

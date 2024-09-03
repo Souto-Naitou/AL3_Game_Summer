@@ -19,6 +19,7 @@ RhythmGame::~RhythmGame()
 {
     for (Note* note : pNoteList_) delete note;
 
+    pAudio_->StopWave(playHandle_Song_);
     delete pLane_;
 }
 
@@ -38,7 +39,12 @@ void RhythmGame::Initialize()
     /// 初期化処理
     pLane_->Initialize();
     pJudgeTiming_->Initialize();
-    
+  
+    /// ロード
+    hKeyF_ = TextureManager::Load("rhythm/F.png");
+    hKeyJ_ = TextureManager::Load("rhythm/J.png");
+    sprite_F_ = Sprite::Create(hKeyF_, { 426,600 }, { 1,1,1,1 }, { 0.5f,0.5f });
+    sprite_J_ = Sprite::Create(hKeyJ_, { 853,600 }, { 1,1,1,1 }, { 0.5f,0.5f });
 
     /// 背景画像の読み込み
     hBackgound_ = TextureManager::Load("tenkyurs/sky_sphere.png");
@@ -57,6 +63,7 @@ void RhythmGame::Initialize()
 
     /// QPFの使用可否を取得
     bool qpfCompatible = QueryPerformanceFrequency(&mFreq_);
+    qpfCompatible;
     assert(qpfCompatible && "QueryPerformanceFrequencyが非対応です");
     QueryPerformanceCounter(&mStart_);
     LARGE_INTEGER mNow;
@@ -67,23 +74,7 @@ void RhythmGame::Initialize()
     /* 楽譜データに楽曲パスが含まれているため楽譜データの読み込みより早く実行してはいけない */
     thread_loading_ = std::thread(&RhythmGame::LoadingThreadProcess, this);
 
-    /// デバッグで使用するデータを登録
-    pDebugOperationData_->pElapsedTime = &elapsedTime_;
-    pDebugOperationData_->pNoteListSize = &notelistSize_;
-    pDebugOperationData_->pSheetMusic = &sheetmusic_;
-    pDebugOperationData_->pEnableMetronome = &enableMetronome_;
-    pDebugOperationData_->pSheetPath = &sheetpath_;
-    pDebugOperationData_->pIsReqReload = &requestReload_;
-    pDebugOperationData_->pIsOpenPopupModal = &isOpenPopupModal_;
-    pDebugOperationData_->pVolume = &musicVolume_;
-    pDebugOperationData_->pIsChangeVolume = &isChangeMusicVolume_;
-    pDebugOperationData_->pCountMeasure = &countMeasure_;
-    pDebugOperationData_->pHitCount = &hitCount_;
-    pDebugOperationData_->pElapsedTimeShifted = &elapsedTimeShifted_;
-    pDebugOperationData_->pFramelate = &fps_;
-    pDebugOperationData_->pBeatCount = &beatCount_;
-
-    musicVolume_ = 0.05f;
+    musicVolume_ = 0.3f;
     playTimingSec_ = 5.02;
 
     /* 0.005 ~ 0.020 */
@@ -169,9 +160,6 @@ void RhythmGame::Update()
             if (note->GetTimeLane() >= 1.0f)
             {
                 note->SetIsPi();
-                pAudio_->PlayWave(hPiNigo_, false, 0.3f);
-                double quarterDebug = elapsedTime_ - elapsedMakeNote;
-                OutputDebugStringA(std::format("quarterDebug = {}\n", quarterDebug).c_str());
             }
         }
         if (note->GetIsDead() && note->GetTimeLane() >= 1.45f)
@@ -194,6 +182,8 @@ void RhythmGame::Update()
 void RhythmGame::DrawSpriteBackGround()
 {
     pSpriteBackGround_->Draw();
+    sprite_F_->Draw();
+    sprite_J_->Draw();
 }
 
 void RhythmGame::Draw3D(const ViewProjection& _viewProjection)
@@ -316,11 +306,6 @@ void RhythmGame::MakeNoteFromSheet()
         {
             GetNextNoteSymbol();
         }
-        if (elapsedTime_ - secPreBeat_ < beatDuration_.quarter)
-        {
-            OutputDebugStringA(std::format("### INCORRECT TIMING ### [Time = {}]\n", CalculateElapsedTime()).c_str());
-        }
-        secPreBeat_ = elapsedTime_;
         beatCount_.quarterCount++;
         beatCount_.eighthCount += 2;
         beatCount_.sixteenthCount += 4;

@@ -2,7 +2,6 @@
 #include "TextureManager.h"
 #include <cassert>
 #include "PrimitiveDrawer.h"
-#include "ImGuiWindow.h"
 #include "TitleScene.h"
 #include "define.h"
 #include <Windows.h>
@@ -15,7 +14,6 @@ GameScene::GameScene()
 
 GameScene::~GameScene() 
 {
-	delete pDebugCamera_;
 	timeEndPeriod(1);
 }
 
@@ -29,39 +27,15 @@ void GameScene::Initialize() {
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&viewProjection_);
 	pCamera = new Camera();
 	pCamera->Initialize({ 0.0f, 3.4f, -43.5f }, { 0.47f, 0.0f, 0.0f });
-	//pCamera->Initialize({ 0.0f, 13.8f, -50.45f }, { 0.85f, 0.0f, 0.0f });
-	pDebugCamera_ = new DebugCamera(kScreenWidth, kScreenHeight);
-	imguiWindow_ = new ImGuiWindow();
-	imguiWindow_->SetDebugOperationData(&debugOperationData_);
 
-	debugOperationData_.pCameraRotation = &pCamera->worldTransform_.rotation_;
-	debugOperationData_.pCameraTranslation = &pCamera->worldTransform_.translation_;
-
-	//currentScene_ = Scenes::Title;
-	//pTitleScene_ = new TitleScene();
-	//pTitleScene_->Initialize();
-	//pTitleScene_->SetGameScene(this);
-	//pRhythmGame_ = new RhythmGame();
-	//pRhythmGame_->SetGameScene(this);
-	//pRhythmGame_->SetDebugOperationData(&debugOperationData_);
-	//pRhythmGame_->Initialize();
-	pResultScene_ = new ResultScene();
-	pResultScene_->SetGameScene(this);
-	pResultScene_->Initialize();
+	currentScene_ = Scenes::Title;
+	pTitleScene_ = new TitleScene();
+	pTitleScene_->Initialize();
+	pTitleScene_->SetGameScene(this);
 }
 
 void GameScene::Update()
 {
-#ifdef _DEBUG
-	if (input_->TriggerKey(DIK_O))
-	{
-		enableDebugCamera = enableDebugCamera ? false : true;
-	}
-#endif // _DEBUG
-
-	imguiWindow_->DebugWindowDraw();
-
-	pDebugCamera_->Update();
 	pCamera->Update();
 
 	switch (currentScene_)
@@ -81,19 +55,10 @@ void GameScene::Update()
 		break;
 	}
 	
-
-	if (enableDebugCamera)
-	{
-		viewProjection_.matView = pDebugCamera_->GetViewProjection().matView;
-		viewProjection_.matProjection = pDebugCamera_->GetViewProjection().matProjection;
-		viewProjection_.TransferMatrix();
-	}
-	else
-	{
-		viewProjection_.matView = pCamera->GetViewProjection().matView;
-		viewProjection_.matProjection = pCamera->GetViewProjection().matProjection;
-		viewProjection_.TransferMatrix();
-	}
+	viewProjection_.matView = pCamera->GetViewProjection().matView;
+	viewProjection_.matProjection = pCamera->GetViewProjection().matProjection;
+	viewProjection_.TransferMatrix();
+	
 }
 
 void GameScene::Draw() {
@@ -218,7 +183,6 @@ void GameScene::ChangeScene()
 			pRhythmGame_ = nullptr;
 		}
 		pRhythmGame_ = new RhythmGame();
-		pRhythmGame_->SetDebugOperationData(&debugOperationData_);
 		pRhythmGame_->SetGameScene(this);
 		pRhythmGame_->Initialize();
 		break;

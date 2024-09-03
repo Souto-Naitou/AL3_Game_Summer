@@ -33,7 +33,7 @@ void JudgeTiming::Draw3D(const ViewProjection& _viewProjection)
     _viewProjection;
     pPrimitiveDrawer_->DrawLine3d(*pLaneEndPoint_[0], *pLaneEndPoint_[1], { 1.0f, 1.0f, 1.0f, 1.0f });
     /// デバッグ用
-    if (true)
+    if (false)
     {
         pPrimitiveDrawer_->DrawLine3d(perfectRange_[0], perfectRange_[1], Vector4(0.2f, 0.2f, 1.0f, 1.0f));
         pPrimitiveDrawer_->DrawLine3d(perfectRange_[2], perfectRange_[3], Vector4(0.2f, 0.2f, 1.0f, 1.0f));
